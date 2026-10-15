@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>จดกำไร — ทีมติดตาม</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="team">
+<div class="demo-bar">
+  <span>โหมดทดลอง — ข้อมูลเป็นข้อมูลสมมติ</span>
+  <button type="button" id="reset-demo">รีเซ็ตข้อมูลเดโม</button>
+</div>
+<main>
+  <header class="shop-head">
+    <div>
+      <h1>ใครต้องติดตามวันนี้</h1>
+      <p class="meta" id="today">กำลังโหลด…</p>
+    </div>
+    <a href="/" class="logout">ออก</a>
+  </header>
+
+  <!-- ตัวเลขสรุปเป็นแท็บกรองรายชื่อด้วย กดกลุ่มไหนก็แสดงเฉพาะกลุ่มนั้น ไม่ต้องเลื่อนผ่าน 60 คน -->
+  <div class="filters" id="filters" role="tablist" aria-label="กรองรายชื่อ">
+    <button type="button" role="tab" data-filter="red" class="f-red"><strong class="money" id="c-red">–</strong>โทรวันนี้</button>
+    <button type="button" role="tab" data-filter="yellow" class="f-yellow"><strong class="money" id="c-yellow">–</strong>ส่งข้อความ</button>
+    <button type="button" role="tab" data-filter="green" class="f-green"><strong class="money" id="c-green">–</strong>ปกติ</button>
+    <button type="button" role="tab" data-filter="help" class="f-help"><strong class="money" id="c-help">–</strong>คำขอช่วย</button>
+  </div>
+
+  <section id="panel-people" class="panel">
+    <div class="panel-head">
+      <p class="panel-hint" id="people-hint"></p>
+      <input type="search" id="search" placeholder="ค้นหาชื่อแผง หรือประเภทร้าน" aria-label="ค้นหาชื่อแผงหรือประเภทร้านในทุกกลุ่ม">
+    </div>
+    <ol class="people" id="people"></ol>
+    <p class="meta" id="people-empty" hidden></p>
+  </section>
+
+  <section id="panel-help" class="panel" hidden>
+    <p class="panel-hint">คำขอที่แม่ค้ากดส่งมา เรียงจากที่รอนานที่สุด</p>
+    <p class="meta" id="queue-empty" hidden>ไม่มีคำขอค้าง</p>
+    <ol class="queue" id="queue"></ol>
+    <details class="done-list">
+      <summary id="done-summary">ช่วยเสร็จแล้วล่าสุด</summary>
+      <ol class="queue" id="done"></ol>
+    </details>
+  </section>
+  <p class="err" id="err" role="alert"></p>
+</main>
+<script src="/team.js"></script>
+<script src="/ui.js"></script>
+<script src="/demo.js"></script>
+</body>
+</html>

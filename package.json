@@ -1,0 +1,14 @@
+{
+  "name": "jod-kamrai",
+  "version": "1.0.0",
+  "description": "จดกำไร — ต้นแบบเว็บช่วยแม่ค้าตลาดจดรายรับ-ต้นทุนรายวัน และช่วยทีมโครงการเห็นว่าใครต้องติดตามก่อน",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "seed": "node scripts/seed.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

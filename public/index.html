@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>จดกำไร</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body class="vendor">
+<div class="demo-bar">
+  <span>โหมดทดลอง — ข้อมูลเป็นข้อมูลสมมติ</span>
+  <button type="button" id="reset-demo">รีเซ็ตข้อมูลเดโม</button>
+</div>
+<main>
+  <p id="status-msg">กำลังเปิดสมุด…</p>
+
+  <!-- หน้าเข้าใช้งาน (แสดงเมื่อ URL ไม่มีรหัสร้าน) -->
+  <section id="login" class="login" hidden>
+    <h1>จดกำไร</h1>
+    <p>สมุดจดรายรับ–ต้นทุนรายวันของแม่ค้า ในโครงการพัฒนาทักษะ 6 สัปดาห์</p>
+
+    <div class="login-choices">
+      <a class="login-card" href="/?p=P01#jod">
+        <strong>ทดลองเป็นแม่ค้า</strong>
+        <span>แผง 01 · ส้มตำ — จดยอดขาย ต้นทุน ดูกำไรย้อนหลังรายเดือน และขอให้ทีมช่วย</span>
+      </a>
+      <a class="login-card" href="/team">
+        <strong>ทดลองเป็นทีมงานโครงการ</strong>
+        <span>หลังบ้าน — ดูว่าใครต้องติดตามก่อน และรับเรื่องขอความช่วยเหลือ</span>
+      </a>
+    </div>
+
+    <details class="more-demo">
+      <summary>ลองร้านที่มีสถานการณ์อื่น</summary>
+      <ul>
+        <li><a href="/?p=P07">แผง 07 — หยุดจดมาหลายวัน</a></li>
+        <li><a href="/?p=P09">แผง 09 — ไม่ใส่ต้นทุน 4 วันติด</a></li>
+        <li><a href="/?p=P10">แผง 10 — ขาดทุน 3 วันติด</a></li>
+        <li><a href="/?p=P60">แผง 60 — สมัครแล้วแต่ยังไม่เคยจด</a></li>
+      </ul>
+    </details>
+
+    <p class="meta login-note">ต้นแบบนี้ยังไม่มีระบบยืนยันตัวตน ระบบจริงแม่ค้าจะเข้าผ่านลิงก์ส่วนตัวที่ทีมส่งทาง LINE และทีมงานใช้รหัสผ่าน</p>
+  </section>
+
+  <header id="shop" class="shop-head" hidden>
+    <div>
+      <h1 id="shop-name"></h1>
+      <p class="meta" id="shop-meta"></p>
+    </div>
+    <a href="/" class="logout">ออก</a>
+  </header>
+
+  <!-- เมนู 1: จดวันนี้ -->
+  <div id="view-jod" class="view" hidden>
+    <div class="missed" id="missed" hidden role="status"></div>
+    <form id="entry" class="sheet" novalidate>
+      <div class="sheet-main">
+      <fieldset class="field">
+        <legend>จดของวันไหน</legend>
+        <div class="day-pick" id="day-pick"></div>
+        <input type="hidden" id="date" name="date">
+        <p class="hint">วันก่อนหน้านั้น จดได้จากเมนู "ดูย้อนหลัง"</p>
+        <p class="err" data-for="date"></p>
+      </fieldset>
+
+      <div class="field">
+        <label for="sales">วันนั้นขายได้ (บาท)</label>
+        <input id="sales" name="sales" inputmode="decimal" autocomplete="off" placeholder="เช่น 1500">
+        <p class="err" data-for="sales"></p>
+      </div>
+
+      <fieldset>
+        <legend>ต้นทุนวันนั้น (บาท)</legend>
+        <p class="hint">กดประเภทที่จ่ายไป แล้วใส่จำนวนเงิน</p>
+        <div class="chips" id="chips"></div>
+        <ol class="cost-rows" id="cost-rows"></ol>
+        <p class="forgot" id="forgot"></p>
+      </fieldset>
+      </div>
+
+      <!-- จอกว้าง: ยอดรวมและปุ่มบันทึกอยู่คอลัมน์ขวา เห็นตลอดระหว่างกรอก -->
+      <div class="sheet-side">
+      <div class="tally" aria-live="polite">
+        <div><span>ขายได้</span><span class="money" id="t-sales">0</span></div>
+        <div><span>ต้นทุนรวม</span><span class="money" id="t-cost">0</span></div>
+        <div class="total"><span id="t-label">กำไร</span><span class="money" id="t-profit">0</span></div>
+      </div>
+
+      <p class="err" id="form-err" role="alert"></p>
+      <button type="submit" class="primary" id="save">บันทึก</button>
+      </div>
+    </form>
+
+    <section id="result" class="result" hidden aria-live="polite">
+      <p class="note" id="r-action"></p>
+      <p class="big" id="r-big"></p>
+      <p class="note money" id="r-detail"></p>
+      <p class="warn" id="r-warn" hidden></p>
+      <p class="note" id="r-progress"></p>
+      <p class="note"><strong id="r-next"></strong></p>
+      <div class="row-actions">
+        <button type="button" class="secondary" id="again">จดวันอื่น หรือแก้ไข</button>
+        <button type="button" class="secondary" id="to-history">ดูย้อนหลัง</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- เมนู 2: ดูย้อนหลัง -->
+  <div id="view-history" class="view" hidden>
+    <!-- มือถือเรียง ยอดรวม → รายวัน → ต้นทุน; จอกว้างแบ่ง ซ้าย (ยอดรวม+ต้นทุน) / ขวา (รายวัน) -->
+    <div class="hist-summary">
+    <div class="month-nav">
+      <button type="button" class="secondary" id="month-prev" aria-label="เดือนก่อนหน้า">‹ เดือนก่อน</button>
+      <h2 id="month-label"></h2>
+      <button type="button" class="secondary" id="month-next" aria-label="เดือนถัดไป">เดือนถัดไป ›</button>
+    </div>
+    <p class="meta" id="progress"></p>
+
+    <dl class="ledger">
+      <div><dt>ขายได้รวม</dt><dd class="money" id="h-sales"></dd></div>
+      <div><dt>ต้นทุนรวม</dt><dd class="money" id="h-cost"></dd></div>
+      <div class="total"><dt id="h-profit-label">กำไรรวม</dt><dd class="money" id="h-profit"></dd></div>
+    </dl>
+
+    <div class="avg">
+      <p class="avg-title">เฉลี่ยต่อวันที่ขาย</p>
+      <div class="avg-row">
+        <div><span class="money" id="avg-sales"></span>ขายได้</div>
+        <div><span class="money" id="avg-profit"></span><span id="avg-profit-label">กำไร</span></div>
+      </div>
+    </div>
+    </div>
+
+    <div class="hist-days">
+    <figure class="chart">
+      <figcaption>กำไรรายวัน (บาท) — แตะแท่งหรือวันที่เพื่อดูรายละเอียด</figcaption>
+      <div id="profit-chart"></div>
+    </figure>
+
+    <div class="cal-head" aria-hidden="true"><span>อา</span><span>จ</span><span>อ</span><span>พ</span><span>พฤ</span><span>ศ</span><span>ส</span></div>
+    <div class="cal" id="days"></div>
+    <p class="cal-key">✓ กำไร &nbsp; ▼ ขาดทุน &nbsp; ช่องเส้นประ = ยังไม่ได้จด</p>
+    <div class="day-detail" id="day-detail" aria-live="polite"></div>
+    </div>
+
+    <figure class="chart hist-costs">
+      <figcaption>เงินต้นทุนไปไหนบ้าง (ทั้งเดือน)</figcaption>
+      <p class="meta" id="cost-headline"></p>
+      <ol class="cost-bars" id="cost-bars"></ol>
+    </figure>
+  </div>
+
+  <!-- เมนู 3: ขอให้ทีมช่วย -->
+  <div id="view-help" class="view" hidden>
+    <h2>ติดตรงไหน บอกทีมได้</h2>
+    <p class="meta">กดเรื่องที่ติด ทีมจะโทรหรือทัก LINE กลับภายในวันนี้</p>
+    <div class="help-buttons" id="help-buttons"></div>
+    <p class="note" id="help-msg" role="status"></p>
+  </div>
+
+  <dialog id="dup">
+    <h2 id="dup-title">วันนี้จดไว้แล้ว</h2>
+    <p id="dup-old" class="money"></p>
+    <p id="dup-new" class="money"></p>
+    <div class="actions">
+      <button type="button" class="primary" id="dup-add">บวกเพิ่มเข้าไป (ขายได้อีกรอบ)</button>
+      <button type="button" class="secondary" id="dup-replace">แทนที่ของเดิม (ที่จดไว้ผิด)</button>
+      <button type="button" class="secondary" id="dup-cancel">ยกเลิก กลับไปแก้</button>
+    </div>
+  </dialog>
+</main>
+
+<nav class="tabs" id="tabs" hidden aria-label="เมนูหลัก">
+  <a href="#jod" data-view="jod">จดวันนี้</a>
+  <a href="#history" data-view="history">ดูย้อนหลัง</a>
+  <a href="#help" data-view="help">ขอให้ทีมช่วย</a>
+</nav>
+<script src="/vendor.js"></script>
+<script src="/ui.js"></script>
+<script src="/demo.js"></script>
+</body>
+</html>
