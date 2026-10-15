@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    container_name: jod-app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8089:3000"
+    volumes:
+      - jod-data:/app/data
+
+volumes:
+  jod-data:
