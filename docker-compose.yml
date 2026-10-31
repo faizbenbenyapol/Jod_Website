@@ -3,6 +3,14 @@ services:
     build: .
     container_name: jod-app
     restart: unless-stopped
+    labels:
+      benyapol.enable: "true"
+      benyapol.slug: "jod"
+      benyapol.name: "จดกำไร"
+      benyapol.url: "https://jod.benyapol.com"
+      benyapol.state: "live"
+      benyapol.health: "/"
+      benyapol.desc: "สมุดจดรายรับ–ต้นทุนรายวันสำหรับแม่ค้าตลาด"
     ports:
       - "127.0.0.1:8089:3000"
     volumes:
